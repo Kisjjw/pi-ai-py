@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pi-ai"
+version = "0.1.0"
+description = "Unified async LLM client, Python port of @earendil-works/pi-ai"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "jsonschema>=4.21",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "respx>=0.21",
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pi_ai"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+
+# populate_by_name=True 让字段既能用 snake_case 也能用线上 alias 构造，
+# 这个插件是唯一能让 mypy 理解该行为的方式。
+#
+# 注意：插件是静态分析的，model_config 必须内联写 ConfigDict 字面量，
+# 引用模块级变量它解析不了，会退化成要求用 alias 名构造对象。
+[tool.pydantic-mypy]
+init_forbid_extra = false
+init_typed = true

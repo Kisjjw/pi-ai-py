@@ -1,0 +1,31 @@
+{
+  "openai-responses": {
+    "gpt-5.5-little": {
+      "name": "gpt-5.5-little",
+      "baseUrl": "https://myapi.com/v1",
+      "reasoning": true,
+      "input": ["text", "image"],
+      "cost": {
+        "input": 5.0,
+        "output": 30.0,
+        "cacheRead": 0.5,
+        "cacheWrite": 0
+      },
+      "contextWindow": 400000,
+      "maxTokens": 128000,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": "minimal",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": null,
+        "max": null
+      },
+      "compat": {
+        "supportsStrictMode": true,
+        "supportsOpenAIGrammarTools": true
+      }
+    }
+  }
+}
