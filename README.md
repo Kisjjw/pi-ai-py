@@ -21,10 +21,10 @@
 
 ## 安装
 
-要求 Python 3.11+。
+要求 Python 3.10+。
 
 ```bash
-git clone <仓库地址> pi-ai-py
+git clone git@github.com:Kisjjw/pi-ai-py.git
 cd pi-ai-py
 pip install -e .
 ```
@@ -35,14 +35,8 @@ pip install -e .
 export OPENAI_API_KEY=sk-...        # Windows PowerShell: $env:OPENAI_API_KEY="sk-..."
 ```
 
-跑一下示例（示例里用 `.env` 读配置，需要额外装一个 `python-dotenv`；库本身不依赖它）：
+### 这里有一个挺完整的示例 examples/agent_loop_pi_ai.py
 
-```bash
-pip install python-dotenv
-python examples/agent_loop_pi_ai.py
-```
-
-开发用的测试与检查工具：`pip install -e ".[dev]"`。
 
 ## 30 秒上手
 

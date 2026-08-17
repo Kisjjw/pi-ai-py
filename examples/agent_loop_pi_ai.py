@@ -147,10 +147,7 @@ def build_my_catalog() -> tuple[Models, Model]:
 
 def build_relay() -> tuple[Models, Model]:
     """方式三：中转站。模型名和协议都跟官方一样，只有端点和 key 不同。
-
-    所以千万别手写 Model：从官方目录取现成的，只把 base_url 换成中转站地址，
-    价格、上下文窗口、thinkingLevelMap、compat 开关全部照官方的来，模型一升级
-    同步一次目录就跟上了。id 保持 "openai"，请求体才和直连官方逐字节一致。
+        id 保持 "openai"，请求体才和直连官方逐字节一致。
 
     只想临时打一发、不想建 provider 的话，用官方 provider 加两个 per-call 选项也行：
         models.complete_simple(model, ctx, base_url=..., api_key=...)
