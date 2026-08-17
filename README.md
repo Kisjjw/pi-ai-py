@@ -245,6 +245,8 @@ python scripts/sync_model_data.py   # 从上游 TypeScript 项目同步模型目
 
 模型目录（`src/pi_ai/data/*.json`）由上游生成，不要手改。
 
-## 许可证
+如果想自己开发独特的协议，也可以参考此md教程，亦或是让ai参考该教程
+docs\adding-a-provider.md
 
-MIT
+
+```本项目积极参与并认可 LINUX DO 社区 的开源生态。```
