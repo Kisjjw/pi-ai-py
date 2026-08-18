@@ -27,6 +27,15 @@ from pi_ai.providers._mixed_table import (
     MixedProviderSpec,
 )
 from pi_ai.providers._table import PROVIDER_SPECS, PROVIDER_SPECS_BY_ID, ProviderSpec
+from pi_ai.providers.faux import (
+    FauxApiKeyAuth,
+    FauxRequest,
+    FauxResponse,
+    FauxStreams,
+    FauxToolCall,
+    faux_model,
+    faux_provider,
+)
 from pi_ai.types import Model
 
 _ANTHROPIC_SPECS_BY_ID = {spec.id: spec for spec in ANTHROPIC_COMPATIBLE_SPECS}
@@ -330,6 +339,11 @@ __all__ = [
     "MIXED_PROVIDER_SPECS",
     "PROVIDER_SPECS",
     "AnthropicProviderSpec",
+    "FauxApiKeyAuth",
+    "FauxRequest",
+    "FauxResponse",
+    "FauxStreams",
+    "FauxToolCall",
     "MixedProviderSpec",
     "ProviderSpec",
     "all_providers",
@@ -342,6 +356,8 @@ __all__ = [
     "cloudflare_ai_gateway_provider",
     "cloudflare_workers_ai_provider",
     "deepseek_provider",
+    "faux_model",
+    "faux_provider",
     "fireworks_provider",
     "github_copilot_provider",
     "google_provider",
