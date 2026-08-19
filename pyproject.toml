@@ -3,7 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pi-ai"
+# 发布名不是 pi-ai：PyPI 的相似名检查会去掉分隔符与 py/python 停用词，
+# 现存的 pi-ai-py 归约后与 pi-ai 相同，注册会被 400 拒。导入名仍是 pi_ai。
+name = "pi-ai-client"
 version = "0.1.0"
 description = "Unified async LLM client, Python port of @earendil-works/pi-ai"
 readme = "README.md"

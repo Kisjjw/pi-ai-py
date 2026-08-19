@@ -24,6 +24,20 @@
 要求 Python 3.10+。
 
 ```bash
+pip install pi-ai-client
+```
+
+**发布名与导入名不一致**：PyPI 上的包名是 `pi-ai-client`，导入名是 `pi_ai`。
+
+```python
+from pi_ai import create_models
+```
+
+（`pi-ai` 和 `pi-ai-py` 这两个名字在 PyPI 上都用不了：后者是一个无关的项目，而前者会被 PyPI 的相似名检查判定为与它过于接近。）
+
+### 从源码装
+
+```bash
 git clone git@github.com:Kisjjw/pi-ai-py.git
 cd pi-ai-py
 pip install -e .
