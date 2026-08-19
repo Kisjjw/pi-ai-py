@@ -9,6 +9,7 @@ description = "Unified async LLM client, Python port of @earendil-works/pi-ai"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+authors = [{ name = "sug_doctor", email = "guo1035491549@gmail.com" }]
 keywords = ["llm", "openai", "anthropic", "async", "streaming"]
 classifiers = [
     "Development Status :: 3 - Alpha",
