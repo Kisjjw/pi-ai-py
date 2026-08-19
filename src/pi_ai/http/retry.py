@@ -4,7 +4,7 @@ import asyncio
 import math
 import random
 from collections.abc import Awaitable, Callable
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import TypeVar
 
@@ -63,8 +63,8 @@ def get_retry_delay_ms(
                 delay_ms = 0.0
             else:
                 if target.tzinfo is None:
-                    target = target.replace(tzinfo=UTC)
-                delay_ms = (target - datetime.now(UTC)).total_seconds() * 1000
+                    target = target.replace(tzinfo=timezone.utc)
+                delay_ms = (target - datetime.now(timezone.utc)).total_seconds() * 1000
         return _validate_server_delay_ms(delay_ms, max_retry_delay_ms, str(error))
 
     exponential_delay_ms: float = min(0.5 * 2**retry_index, 8.0) * 1000
