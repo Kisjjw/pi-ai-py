@@ -4,7 +4,7 @@
 没有 MCP、没有 FastAPI、没有流式，只保留「模型 ↔ 工具」来回对话这一件事。
 
 运行前在 .env 里配好 LLM_BASE_URL / LLM_API_KEY / LLM_MODEL，然后：
-    python example_agent_loop.py
+    python examples/agent_loop.py
 """
 
 from __future__ import annotations

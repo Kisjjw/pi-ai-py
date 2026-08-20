@@ -5,21 +5,24 @@
   2. 历史：手搓的 items 列表变成 Context.messages，元素是消息对象而不是裸 dict；
   3. 工具：Responses 协议的平铺 schema 变成 Tool，由适配器翻译成各家协议的写法。
 
-好处是这份 loop 不再绑死 Responses 协议。把下面的 build_* 换成别家 provider，
+好处是这份 loop 不再绑死 Responses 协议。把 build_* 换成别家 provider，
 Anthropic / Gemini / DeepSeek 都能跑，循环体一个字不用改。
 
-第 2 节给了三种拿到 (Models, Model) 的方式，都以 OpenAI gpt-5.5 为例，在 main()
-里换一行就能切。运行：
-    python examples/agent_loop_pi_ai.py
+第 2 节是 README「三种接入方式」的可运行版本，都以 OpenAI gpt-5.5 为例，
+用命令行参数切换：
+    python examples/agent_loop_pi_ai.py            # official：官方厂商，读 OPENAI_API_KEY
+    python examples/agent_loop_pi_ai.py catalog    # 自定义模型目录，读 MY_OPENAI_API_KEY 或 OPENAI_API_KEY
+    python examples/agent_loop_pi_ai.py relay      # 中转站，读 LLM_BASE_URL / LLM_API_KEY / LLM_MODEL
+
+pi_ai 本身只读进程环境变量；装了 python-dotenv 的话，这个示例会顺手加载 .env。
 """
 
 from __future__ import annotations
 
 import asyncio
 import os
+import sys
 from pathlib import Path
-
-from dotenv import load_dotenv
 
 from pi_ai import (
     Context,
@@ -37,7 +40,12 @@ from pi_ai.auth.env import env_api_key_auth
 from pi_ai.catalog import load_provider_models
 from pi_ai.providers import openai_provider
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    pass  # dotenv 不是本项目的依赖，没装就直接读进程环境变量
+else:
+    load_dotenv()
 
 MAX_TURNS = 5
 
@@ -218,9 +226,19 @@ async def run_agent(models: Models, model: Model, system: str, question: str) ->
 
 # ---------------- 4. 跑起来 ----------------
 
+BUILDERS = {
+    "official": build_official,
+    "catalog": build_my_catalog,
+    "relay": build_relay,
+}
+
+
 async def main() -> None:
-    # 换成 build_official() / build_my_catalog() 就切到另外两种配置方式。
-    models, model = build_relay()
+    mode = sys.argv[1] if len(sys.argv) > 1 else "official"
+    if mode not in BUILDERS:
+        raise SystemExit(f"用法: python examples/agent_loop_pi_ai.py [{'|'.join(BUILDERS)}]")
+
+    models, model = BUILDERS[mode]()
     print(f"用 {model.provider}/{model.id} @ {model.base_url}")
 
     answer = await run_agent(
