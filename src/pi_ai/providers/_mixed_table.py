@@ -46,6 +46,14 @@ MIXED_PROVIDER_SPECS: tuple[MixedProviderSpec, ...] = (
         base_url="https://api.individual.githubcopilot.com",
     ),
     MixedProviderSpec(
+        id="openrouter",
+        name="OpenRouter",
+        apis=("anthropic-messages", "openai-completions"),
+        auth_name="OpenRouter API key",
+        env_vars=("OPENROUTER_API_KEY",),
+        base_url="https://openrouter.ai/api/v1",
+    ),
+    MixedProviderSpec(
         id="opencode",
         name="OpenCode Zen",
         apis=(

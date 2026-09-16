@@ -22,7 +22,7 @@ class ProviderSpec:
 #:
 #: 不在此表中的同协议厂商：
 #: - cloudflare-workers-ai：自定义认证（API key + 账号 id）与端点占位符替换，见 M6
-#: - 混合协议厂商（xai、fireworks、github-copilot、cloudflare-ai-gateway、
+#: - 混合协议厂商（xai、fireworks、github-copilot、openrouter、cloudflare-ai-gateway、
 #:   opencode、opencode-go）：需要多个适配器就绪，见 M6
 PROVIDER_SPECS: tuple[ProviderSpec, ...] = (
     ProviderSpec(
@@ -87,13 +87,6 @@ PROVIDER_SPECS: tuple[ProviderSpec, ...] = (
         base_url="https://integrate.api.nvidia.com/v1",
         auth_name="NVIDIA API key",
         env_vars=("NVIDIA_API_KEY",),
-    ),
-    ProviderSpec(
-        id="openrouter",
-        name="OpenRouter",
-        base_url="https://openrouter.ai/api/v1",
-        auth_name="OpenRouter API key",
-        env_vars=("OPENROUTER_API_KEY",),
     ),
     ProviderSpec(
         id="qwen-token-plan",

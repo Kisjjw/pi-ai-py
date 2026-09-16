@@ -97,7 +97,7 @@ async def run_agent(client: AsyncOpenAI, system: str, question: str) -> str:
 
         # 没有要调的工具了，说明模型说完了，退出循环
         if not calls:
-            print(f"  模型不再调工具，结束")
+            print("  模型不再调工具，结束")
             return response.output_text
 
         # 逐个执行，每个结果作为一个独立 item 追加，用 call_id 和调用配对

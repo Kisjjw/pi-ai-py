@@ -37,7 +37,7 @@ async def main():
     models = create_models()
     models.set_provider(provider_by_id("deepseek"))   # 自动从 DEEPSEEK_API_KEY 读 key
 
-    model = models.get_model("deepseek", "deepseek-v4-flash")
+    model = models.get_model("deepseek", "deepseek-flash")
     reply = await models.complete_simple(
         model,
         Context(system_prompt="回答简短。", messages=[user_text("用一句话解释 TCP 慢启动")]),
@@ -50,7 +50,7 @@ async def main():
 asyncio.run(main())
 ```
 
-换厂商就是换 `provider_by_id("openai")` / `provider_by_id("anthropic")` 等，再换个模型 id。模型 id 必须和内置目录一致，用 `[m.id for m in models.get_models("deepseek")]` 可以列出某家的全部模型。
+换厂商就是换 `provider_by_id("openai")` / `provider_by_id("anthropic")` 等，再换个模型 id。OpenAI 新旗舰是 `gpt-6-astra`（同系列还有 `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna`），DeepSeek 现网模型是 `deepseek-flash`（V4.1 Flash，原生多模态）和 `deepseek-v4-pro`。模型 id 必须和内置目录一致，用 `[m.id for m in models.get_models("deepseek")]` 可以列出某家的全部模型。
 
 ## 三种接入方式
 
@@ -102,7 +102,7 @@ models.set_provider(
         api=openai_responses_api(),
     )
 )
-model = models.get_model("openai", "gpt-5.5")
+model = models.get_model("openai", "gpt-6-astra")
 ```
 
 ### 方式三：自定义模型目录
@@ -193,7 +193,7 @@ if reply.stop_reason == "error":
 
 **openai-completions**（27 家）：`ant-ling`、`baseten`、`cerebras`、`cloudflare-ai-gateway`、`cloudflare-workers-ai`、`deepseek`、`fireworks`、`github-copilot`、`groq`、`huggingface`、`moonshotai`、`moonshotai-cn`、`nvidia`、`opencode`、`opencode-go`、`openrouter`、`qwen-token-plan`、`qwen-token-plan-cn`、`qwen-token-plan-individual`、`together`、`xai`、`xiaomi`、`xiaomi-token-plan-ams`、`xiaomi-token-plan-cn`、`xiaomi-token-plan-sgp`、`zai`、`zai-coding-cn`
 
-**anthropic-messages**（10 家）：`anthropic`、`cloudflare-ai-gateway`、`fireworks`、`github-copilot`、`kimi-coding`、`minimax`、`minimax-cn`、`opencode`、`opencode-go`、`vercel-ai-gateway`
+**anthropic-messages**（11 家）：`anthropic`、`cloudflare-ai-gateway`、`fireworks`、`github-copilot`、`kimi-coding`、`minimax`、`minimax-cn`、`opencode`、`opencode-go`、`openrouter`、`vercel-ai-gateway`
 
 **openai-responses**（6 家）：`openai`、`cloudflare-ai-gateway`、`github-copilot`、`opencode`、`opencode-go`、`xai`
 
@@ -201,7 +201,7 @@ if reply.stop_reason == "error":
 
 **azure-openai-responses**（1 家）：`azure-openai-responses`
 
-其中 6 家同时提供多种协议，按 `model.api` 自动分派。Azure 和 Cloudflare 需要额外的环境变量（`AZURE_OPENAI_ENDPOINT`、`CLOUDFLARE_ACCOUNT_ID` 等），细节见 [docs/adding-a-provider.md](docs/adding-a-provider.md)。
+其中 7 家同时提供多种协议，按 `model.api` 自动分派。Azure 和 Cloudflare 需要额外的环境变量（`AZURE_OPENAI_ENDPOINT`、`CLOUDFLARE_ACCOUNT_ID` 等），细节见 [docs/adding-a-provider.md](docs/adding-a-provider.md)。
 
 模型目录里还带着 4 家上游已实现、本项目尚未移植适配器的厂商（`amazon-bedrock`、`google-vertex`、`mistral`、`openai-codex`），它们的模型能被解析，但发请求会报 `unknown api`。
 

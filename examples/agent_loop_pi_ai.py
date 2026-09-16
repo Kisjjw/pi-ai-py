@@ -8,7 +8,7 @@
 好处是这份 loop 不再绑死 Responses 协议。把 build_* 换成别家 provider，
 Anthropic / Gemini / DeepSeek 都能跑，循环体一个字不用改。
 
-第 2 节是 README「三种接入方式」的可运行版本，都以 OpenAI gpt-5.5 为例，
+第 2 节是 README「三种接入方式」的可运行版本，都以 OpenAI gpt-6-astra 为例，
 用命令行参数切换：
     python examples/agent_loop_pi_ai.py            # official：官方厂商，读 OPENAI_API_KEY
     python examples/agent_loop_pi_ai.py catalog    # 自定义模型目录，读 MY_OPENAI_API_KEY 或 OPENAI_API_KEY
@@ -115,13 +115,13 @@ def _require_model(models: Models, provider_id: str, model_id: str) -> Model:
 def build_official() -> tuple[Models, Model]:
     """方式一：官方正版。目录、端点、鉴权全都内置，只要有 OPENAI_API_KEY。
 
-    gpt-5.5 的上下文窗口、价格、思考级别映射、compat 开关都在
+    gpt-6-astra 的上下文窗口、价格、思考级别映射、compat 开关都在
     src/pi_ai/data/openai.json 里，由上游 TypeScript 项目生成，不用你操心。
     换别家就是换这一行 provider：provider_by_id("deepseek")、anthropic_provider() 等。
     """
     models = create_models()
     models.set_provider(openai_provider())
-    return models, _require_model(models, "openai", "gpt-5.5")
+    return models, _require_model(models, "openai", "gpt-6-astra")
 
 
 def build_my_catalog() -> tuple[Models, Model]:
@@ -178,7 +178,7 @@ def build_relay() -> tuple[Models, Model]:
             api=openai_responses_api(),
         )
     )
-    return models, _require_model(models, "openai", os.getenv("LLM_MODEL") or "gpt-5.5")
+    return models, _require_model(models, "openai", os.getenv("LLM_MODEL") or "gpt-6-astra")
 
 
 # ---------------- 3. agent loop 本体 ----------------

@@ -305,7 +305,7 @@ async def test_errors_surface_as_messages(models):
 
 @respx.mock
 async def test_all_four_protocols_share_one_collection(monkeypatch):
-    """25 家 + 2 家 Responses 厂商可以注册进同一个集合。"""
+    """24 家 completions/anthropic + 2 家 Responses 厂商可以注册进同一个集合。"""
     from pi_ai.providers import anthropic_messages_providers, openai_completions_providers
 
     collection = create_models()
@@ -316,6 +316,6 @@ async def test_all_four_protocols_share_one_collection(monkeypatch):
     ]:
         collection.set_provider(provider)
 
-    assert len(collection.get_providers()) == 27
+    assert len(collection.get_providers()) == 26
     apis = {m.api for m in collection.get_models()}
     assert apis == {"openai-completions", "anthropic-messages", "openai-responses", "azure-openai-responses"}

@@ -19,9 +19,9 @@ def _clear_provider_env(monkeypatch):
         monkeypatch.delenv(var, raising=False)
 
 
-def test_the_table_covers_twenty_providers():
-    assert len(PROVIDER_SPECS) == 20
-    assert len({spec.id for spec in PROVIDER_SPECS}) == 20
+def test_the_table_covers_nineteen_providers():
+    assert len(PROVIDER_SPECS) == 19
+    assert len({spec.id for spec in PROVIDER_SPECS}) == 19
 
 
 @pytest.mark.parametrize("spec", PROVIDER_SPECS, ids=lambda spec: spec.id)
@@ -61,7 +61,7 @@ def test_all_providers_can_share_one_collection():
     assert len(models.get_providers()) == len(PROVIDER_SPECS)
     total = sum(len(p.get_models()) for p in providers)
     assert len(models.get_models()) == total
-    assert total > 400
+    assert total > 200
 
 
 def test_base_urls_match_the_catalog_entries():

@@ -44,6 +44,40 @@ def test_known_models_carry_expected_metadata():
     assert sonnet.cost.input > 0
 
 
+def test_openai_gpt6_and_gpt56_are_catalogued():
+    openai = load_provider_models("openai")
+    astra = openai["gpt-6-astra"]
+    assert astra.api == "openai-responses"
+    assert astra.reasoning is True
+    assert astra.cost.input == 10
+    assert astra.thinking_level_map is not None
+    assert astra.thinking_level_map["max"] == "max"
+    assert astra.compat.supports_explicit_prompt_cache_mode is True
+
+    sol = openai["gpt-5.6-sol"]
+    assert sol.cost.input == 4
+    assert sol.cost.output == 20
+    assert "gpt-5.6-terra" in openai
+    assert "gpt-5.6-luna" in openai
+
+    azure = load_provider_models("azure-openai-responses")
+    assert "gpt-6-astra" in azure
+    assert "gpt-5.6-sol" in azure
+
+
+def test_deepseek_v41_flash_is_catalogued():
+    deepseek = load_provider_models("deepseek")
+    flash = deepseek["deepseek-flash"]
+    assert flash.name == "DeepSeek V4.1 Flash"
+    assert flash.reasoning is True
+    assert "image" in flash.input
+    assert flash.cost.input == 0.3
+    assert flash.thinking_level_map is not None
+    assert flash.thinking_level_map["low"] == "low"
+    assert flash.compat.thinking_format == "deepseek"
+    assert "deepseek-v4-pro" in deepseek
+
+
 def test_compat_is_parsed_into_the_right_type():
     from pi_ai.types import AnthropicMessagesCompat, OpenAICompletionsCompat
 
@@ -126,7 +160,11 @@ def test_known_providers_resolve_to_their_documented_compat():
     assert get_compat(zai).thinking_format == "zai"
 
     openrouter_models = load_provider_models("openrouter")
-    anthropic_via_openrouter = next(m for mid, m in openrouter_models.items() if mid.startswith("anthropic/"))
+    anthropic_via_openrouter = next(
+        m
+        for mid, m in openrouter_models.items()
+        if mid.startswith("anthropic/") and m.api == "openai-completions"
+    )
     compat = get_compat(anthropic_via_openrouter)
     assert compat.cache_control_format == "anthropic"
     assert compat.session_affinity_format == "openrouter"

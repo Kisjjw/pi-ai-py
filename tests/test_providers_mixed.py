@@ -27,6 +27,7 @@ ENV_VARS = (
     "FIREWORKS_API_KEY",
     "COPILOT_GITHUB_TOKEN",
     "OPENCODE_API_KEY",
+    "OPENROUTER_API_KEY",
     "CLOUDFLARE_API_KEY",
     "CLOUDFLARE_ACCOUNT_ID",
     "CLOUDFLARE_GATEWAY_ID",
@@ -115,7 +116,7 @@ def test_every_model_can_be_dispatched(spec):
         assert provider.streams_for(model) is not None
 
 
-def test_mixed_providers_builds_all_seven():
+def test_mixed_providers_builds_the_declared_set():
     ids = [p.id for p in mixed_providers()]
     assert ids == [s.id for s in (*MIXED_PROVIDER_SPECS, *CLOUDFLARE_SPECS)]
 

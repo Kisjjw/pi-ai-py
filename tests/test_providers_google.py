@@ -287,7 +287,7 @@ async def test_all_five_protocols_share_one_collection(monkeypatch):
     ]:
         collection.set_provider(provider)
 
-    assert len(collection.get_providers()) == 28
+    assert len(collection.get_providers()) == 27
     apis = {m.api for m in collection.get_models()}
     assert apis == {
         "openai-completions",
