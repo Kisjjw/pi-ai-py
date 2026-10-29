@@ -229,7 +229,7 @@ ruff check .
 mypy src
 ```
 
-模型目录（`src/pi_ai/data/*.json`）由上游 TypeScript 项目生成（`python scripts/sync_model_data.py` 同步），不要手改。
+模型基础目录（`src/pi_ai/data/*.json`）由上游 TypeScript 项目生成（`python scripts/sync_model_data.py` 同步）。OpenAI、Anthropic、DeepSeek 的最新定向修订、模型 ID、价格及官方来源见 [模型目录更新记录](docs/model-catalog-updates.md)；再次同步时需保留这些修订。
 
 ---
 

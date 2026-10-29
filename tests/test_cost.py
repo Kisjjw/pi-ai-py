@@ -1,3 +1,6 @@
+import pytest
+
+from pi_ai.catalog import load_provider_models
 from pi_ai.cost import calculate_cost, clamp_thinking_level, get_supported_thinking_levels
 from pi_ai.types import Model, ModelCost, ModelCostTier, Usage
 
@@ -115,3 +118,25 @@ def test_clamp_falls_back_downward_when_nothing_higher_exists():
 
 def test_clamp_on_non_reasoning_model_yields_off():
     assert clamp_thinking_level(make_model(), "high") == "off"
+
+
+@pytest.mark.parametrize(
+    "provider,model_id,threshold,base_output,long_output",
+    [
+        ("openai", "gpt-6-astra", 272_000, 50, 75),
+        ("openai", "gpt-6-sol", 272_000, 10, 15),
+        ("openai", "gpt-6.1-sol", 272_000, 10, 15),
+        ("openai", "gpt-6.1-terra", 272_000, 5, 7.5),
+        ("openai", "gpt-6-luna", 272_000, 0.5, 0.75),
+        ("anthropic", "claude-haiku-5-5", 100_000, 0.5, 2.5),
+    ],
+)
+def test_current_model_long_context_prices_count_cache_and_apply_after_threshold(
+    provider: str, model_id: str, threshold: int, base_output: float, long_output: float
+) -> None:
+    model = load_provider_models(provider)[model_id]
+    at_threshold = Usage(input=threshold - 20_000, cache_read=10_000, cache_write=10_000, output=1000)
+    above_threshold = at_threshold.model_copy(update={"cache_read": 10_001})
+
+    assert calculate_cost(model, at_threshold).output == pytest.approx(base_output / 1000)
+    assert calculate_cost(model, above_threshold).output == pytest.approx(long_output / 1000)

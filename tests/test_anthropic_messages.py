@@ -15,6 +15,7 @@ from pi_ai.api.anthropic_messages import (
     stream,
     stream_simple,
 )
+from pi_ai.catalog import load_provider_models
 from pi_ai.http.errors import ProviderHTTPError
 from pi_ai.types import Context, Model, ModelCost, Tool, user_text
 
@@ -471,3 +472,43 @@ async def test_stream_simple_always_leaves_room_for_the_answer():
 
     body = json.loads(route.calls[0].request.content)
     assert body["thinking"]["budget_tokens"] <= body["max_tokens"] - 1024
+
+
+@pytest.mark.parametrize(
+    "model_id,reasoning,thinking_type,effort",
+    [
+        ("claude-opus-5-5", None, None, None),
+        ("claude-sonnet-5-5", None, "between_tools", None),
+        ("claude-haiku-5-5", None, "disabled", None),
+        ("claude-opus-5-5", "off", "adaptive", "low"),
+        ("claude-sonnet-5-5", "off", "between_tools", None),
+        ("claude-haiku-5-5", "off", "disabled", None),
+        ("claude-opus-5-5", "max", "adaptive", "max"),
+        ("claude-sonnet-5-5", "max", "adaptive", "max"),
+        ("claude-haiku-5-5", "max", "adaptive", "max"),
+        ("claude-haiku-4-5", "off", "disabled", None),
+    ],
+)
+@respx.mock
+async def test_catalogued_claude_models_send_supported_thinking_settings(
+    model_id: str, reasoning: str | None, thinking_type: str | None, effort: str | None
+) -> None:
+    response_text = text_response()  # type: ignore[no-untyped-call]  # Existing fixture helper.
+    route = respx.post(ENDPOINT).mock(return_value=httpx.Response(200, text=response_text))
+    model = load_provider_models("anthropic")[model_id]
+
+    reply = await stream_simple(model, CTX, {"api_key": "test-key", "reasoning": reasoning}).result()
+
+    assert reply.stop_reason == "stop"
+    body = json.loads(route.calls[0].request.content)
+    assert body["model"] == model_id
+    if thinking_type is None:
+        assert "thinking" not in body
+    elif thinking_type == "adaptive":
+        assert body["thinking"] == {"type": "adaptive", "display": "summarized"}
+    else:
+        assert body["thinking"] == {"type": thinking_type}
+    if effort:
+        assert body["output_config"] == {"effort": effort}
+    else:
+        assert "output_config" not in body

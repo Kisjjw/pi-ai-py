@@ -15,8 +15,9 @@ from pi_ai.api.openai_responses import (
     stream,
     stream_simple,
 )
+from pi_ai.catalog import load_provider_models
 from pi_ai.http.errors import ProviderHTTPError
-from pi_ai.types import Context, CostBreakdown, Model, ModelCost, Tool, Usage, user_text
+from pi_ai.types import Context, CostBreakdown, ImageContent, Model, ModelCost, Tool, Usage, UserMessage, user_text
 
 ENDPOINT = "https://api.openai.com/v1/responses"
 
@@ -428,3 +429,33 @@ async def test_stream_simple_translates_reasoning():
     body = json.loads(route.calls[0].request.content)
     assert body["reasoning"]["effort"] == "medium"
     assert body["include"] == ["reasoning.encrypted_content"]
+
+
+@pytest.mark.parametrize(
+    "model_id,off_effort",
+    [
+        ("gpt-6-astra", "low"),
+        ("gpt-6-sol", "none"),
+        ("gpt-6.1-sol", "low"),
+        ("gpt-6.1-terra", "none"),
+        ("gpt-6-luna", "none"),
+    ],
+)
+@pytest.mark.parametrize("reasoning", ["off", "max"])
+@respx.mock
+async def test_catalogued_gpt6_models_preserve_images_and_use_supported_effort(
+    model_id: str, off_effort: str, reasoning: str
+) -> None:
+    response_text = text_response()  # type: ignore[no-untyped-call]  # Existing fixture helper.
+    route = respx.post(ENDPOINT).mock(return_value=httpx.Response(200, text=response_text))
+    model = load_provider_models("openai")[model_id]
+    context = Context(messages=[UserMessage(content=[ImageContent(data="AAA", mime_type="image/png")])])
+
+    reply = await stream_simple(model, context, {"api_key": "test-key", "reasoning": reasoning}).result()
+
+    assert reply.stop_reason == "stop"
+    body = json.loads(route.calls[0].request.content)
+    assert body["model"] == model_id
+    assert body["reasoning"]["effort"] == (off_effort if reasoning == "off" else "max")
+    assert body["input"][0]["content"][0]["type"] == "input_image"
+    assert body["input"][0]["content"][0]["image_url"] == "data:image/png;base64,AAA"

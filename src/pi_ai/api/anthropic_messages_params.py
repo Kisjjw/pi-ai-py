@@ -200,5 +200,8 @@ def _apply_thinking(params: dict[str, Any], model: Model, options: Mapping[str, 
             }
         return
 
-    if thinking_enabled is False and (model.thinking_level_map or {}).get("off", "missing") is not None:
-        params["thinking"] = {"type": "disabled"}
+    off_mode = (model.thinking_level_map or {}).get("off", "disabled")
+    if thinking_enabled is False and off_mode is not None:
+        # Sonnet 5.5 用 between_tools 关闭前置思考，不接受 disabled，
+        # 且该模式不能携带 display 或 budget_tokens。
+        params["thinking"] = {"type": "between_tools" if off_mode == "between_tools" else "disabled"}

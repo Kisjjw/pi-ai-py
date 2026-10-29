@@ -25,6 +25,7 @@ from pi_ai.api.simple_options import (
     build_base_options,
     clamp_max_tokens_to_context,
 )
+from pi_ai.cost import clamp_thinking_level
 from pi_ai.event_stream import AssistantMessageEventStream
 from pi_ai.http.client import OpenProviderStream, merge_headers, open_stream_post
 from pi_ai.http.errors import ProviderHTTPError, format_provider_error, normalize_provider_error
@@ -290,7 +291,8 @@ def stream_simple(
     base = build_base_options(model, context, options, options.get("api_key"))
 
     reasoning = options.get("reasoning")
-    if not reasoning:
+    reasoning = clamp_thinking_level(model, reasoning) if reasoning else None
+    if not reasoning or reasoning == "off":
         return stream(model, context, {**base, "thinking_enabled": False})
 
     if force_adaptive_thinking(model):

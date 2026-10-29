@@ -68,7 +68,7 @@ def test_openai_gpt6_and_gpt56_are_catalogued():
 def test_deepseek_v41_flash_is_catalogued():
     deepseek = load_provider_models("deepseek")
     flash = deepseek["deepseek-flash"]
-    assert flash.name == "DeepSeek V4.1 Flash"
+    assert flash.name == "DeepSeek V4.1 Flash 1017"
     assert flash.reasoning is True
     assert "image" in flash.input
     assert flash.cost.input == 0.3
